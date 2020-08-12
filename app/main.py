@@ -6,7 +6,6 @@
 '''
 import json
 import time
-from datetime import date
 
 import requests
 
@@ -22,7 +21,7 @@ def randomTime(a, b):
     return randint
 
 
-def main():
+def start_main():
     apps = []
     hasNextPage = 1
     page = 0
@@ -80,6 +79,6 @@ def insert(payload):
 
 
 if __name__ == '__main__':
-    main()
+    start_main()
     # random_time = randomTime(3, 30)
     # print(f"【().randomTime={random_time}】")
