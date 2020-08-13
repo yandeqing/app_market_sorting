@@ -26,6 +26,7 @@ def start_main():
     content = data.content
     soup = BeautifulSoup(content, 'lxml')
     [s.extract() for s in soup.findAll('script')]
+    keys_array = ["zqsl", "cjsl", "zgb", "sjzz", "ltgb", "ltsz"]
     titles_array = []
     values_array = []
     table = soup.find_all(class_="table")[0]
@@ -38,17 +39,20 @@ def start_main():
         values_array.extend([float(s.text) for s in find_childrens])
         titles_array.extend([s.text for s in titles_childrens])
     dest = dict(zip(titles_array, values_array))
+    dest_info = {}
     try:
         update_date = soup.find(class_='sse_home_in_table2').findChildren('span')[0].text
         print(f"【start_main().response={update_date}】")
-        dest['update_date'] = update_date
+        dest_info['update_date'] = update_date
     except:
         pass
-    dest['type'] = 'stock_indexes'
-    print(f"【start_main().response={dest}】")
+    dest_info['type'] = 'sz_stock_indexes'
+    dest_info['lbmc'] = '上证股票'
+    dest_info['sjzz'] = dest['总市值/亿元']
+    print(f"【start_main().response={dest_info}】")
     url = "http://139.129.229.205:8088"
-    response = requests.post(url, json=dest)
-    print(f"insert {dest}{response.text}")
+    response = requests.post(url, json=dest_info)
+    print(f"insert {dest_info}{response.text}")
 
 
 if __name__ == '__main__':
