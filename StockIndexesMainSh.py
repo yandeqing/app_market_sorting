@@ -26,7 +26,6 @@ def start_main():
     content = data.content
     soup = BeautifulSoup(content, 'lxml')
     [s.extract() for s in soup.findAll('script')]
-    keys_array = ["zqsl", "cjsl", "zgb", "sjzz", "ltgb", "ltsz"]
     titles_array = []
     values_array = []
     table = soup.find_all(class_="table")[0]
