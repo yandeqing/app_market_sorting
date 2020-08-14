@@ -1,1 +1,1 @@
-nohup python TimeSchedue.py > TimeSchedue.out  &
+python TimeSchedue.py > TimeSchedue.out  &

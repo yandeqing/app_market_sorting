@@ -1,1 +1,1 @@
-nohup python StockIndexesMainSz.py > StockIndexesMainSz.out  &
+python StockIndexesMainSz.py > StockIndexesMainSz.out  &
