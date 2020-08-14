@@ -38,6 +38,7 @@ def start_main():
         values_array.extend([float(s.text) for s in find_childrens])
         titles_array.extend([s.text for s in titles_childrens])
     dest = dict(zip(titles_array, values_array))
+    print(f"【start_main().dest={dest}】")
     dest_info = {}
     try:
         update_date = soup.find(class_='sse_home_in_table2').findChildren('span')[0].text
@@ -48,16 +49,20 @@ def start_main():
     dest_info['type'] = 'sz_stock_indexes'
     dest_info['lbmc'] = '上证股票'
     dest_info['sjzz'] = dest['总市值/亿元']
+    dest_info['zqsl'] = dest['上市股票/只']
+    dest_info['ltsz'] = dest['流通市值/亿元']
     print(f"【start_main().response={dest_info}】")
     url = "http://139.129.229.205:8088"
     response = requests.post(url, json=dest_info)
     print(f"insert {dest_info}{response.text}")
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSh.py  end")
 
 
 if __name__ == '__main__':
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} StockIndexesMainSh.py  start")
-    sched = BlockingScheduler()
-    sched.add_job(start_main, CronTrigger.from_crontab('45 9 * * *'))
-    sched.start()
+    start_main()
+    # strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    # print(f"{strftime} StockIndexesMainSh.py  start")
+    # sched = BlockingScheduler()
+    # sched.add_job(start_main, CronTrigger.from_crontab('45 9 * * *'))
+    # sched.start()
