@@ -78,6 +78,6 @@ if __name__ == '__main__':
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSz.py  start")
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('47 9 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('17 9 * * *'))
     sched.start()
 

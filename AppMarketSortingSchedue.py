@@ -2,14 +2,16 @@
 # coding=utf-8
 '''
 @author: Zuber
-@date:  2020/7/29 16:58
+@date:  2020/8/12 10:26
 '''
 import json
+import requests
 import time
 
-import requests
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
 
-
+import main
 def getUrl(num):
     return f"https://wap1.hispace.hicloud.com/uowap/index?method=internal.getTabDetail&serviceType=20&reqPageNum={num}" \
            "&uri=1ca1964fe0c343cbab12f94d6dc5ef7e&maxResults=25&zone=&locale=zh_CN"
@@ -77,8 +79,14 @@ def insert(payload):
     response = requests.post(url, json=payload)
     print(f"insert {payload}{response.text}")
 
+def job_function():
+    main.start_main()
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} AppMarketSortingSchedue.py  end")
 
 if __name__ == '__main__':
-    start_main()
-    # random_time = randomTime(3, 30)
-    # print(f"【().randomTime={random_time}】")
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} AppMarketSortingSchedue.py  start")
+    sched = BlockingScheduler()
+    sched.add_job(job_function, CronTrigger.from_crontab('10 19 * * *'))
+    sched.start()
