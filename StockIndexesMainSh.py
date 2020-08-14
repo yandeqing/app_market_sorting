@@ -60,9 +60,9 @@ def start_main():
 
 
 if __name__ == '__main__':
-    start_main()
-    # strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    # print(f"{strftime} StockIndexesMainSh.py  start")
-    # sched = BlockingScheduler()
-    # sched.add_job(start_main, CronTrigger.from_crontab('45 9 * * *'))
-    # sched.start()
+    # start_main()
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} StockIndexesMainSh.py  start")
+    sched = BlockingScheduler()
+    sched.add_job(start_main, CronTrigger.from_crontab('45 9 * * *'))
+    sched.start()
