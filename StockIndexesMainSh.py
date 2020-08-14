@@ -4,10 +4,10 @@
 @author: Zuber
 @date:  2020/7/29 16:58
 '''
-import json
 import time
-
 import requests
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
 from bs4 import BeautifulSoup
 
 
@@ -52,7 +52,12 @@ def start_main():
     url = "http://139.129.229.205:8088"
     response = requests.post(url, json=dest_info)
     print(f"insert {dest_info}{response.text}")
+    print(f"{strftime} StockIndexesMainSh.py  end")
 
 
 if __name__ == '__main__':
-    start_main()
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} StockIndexesMainSh.py  start")
+    sched = BlockingScheduler()
+    sched.add_job(start_main, CronTrigger.from_crontab('15 9 * * *'))
+    sched.start()

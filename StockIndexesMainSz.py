@@ -4,15 +4,12 @@
 @author: Zuber
 @date:  2020/7/29 16:58
 '''
-import json
 import random
 import time
 
 import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
-
-import StockIndexesMainSh
 
 
 def getDates():
@@ -74,7 +71,6 @@ def job_function():
     date = getYesterday().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date)
-    StockIndexesMainSh.start_main()
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSz.py  end")
 
@@ -82,6 +78,6 @@ if __name__ == '__main__':
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSz.py  start")
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('10 9 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('47 9 * * *'))
     sched.start()
 
