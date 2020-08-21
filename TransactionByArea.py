@@ -46,7 +46,7 @@ def start_main(strftime,pageno=1):
             if key != 'dq':
                 item[key] = trim(item[key])
         item['type'] = 'transaction_by_area'
-        item['update_date'] = strftime+"-01 08:00:00"
+        item['update_date'] = strftime+"-01"
         url = "http://139.129.229.205:8088"
         response = requests.post(url, json=item)
         print(f"insert {item}{response.text}")
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     # print(f"【().dates={dates}】")
     # for item in dates:
     #     start_main(item,1)
+    #     start_main(item,2)
 
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} TransactionByArea.py  start")

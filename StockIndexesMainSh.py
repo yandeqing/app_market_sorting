@@ -16,6 +16,9 @@ def getUrl():
 
 
 def start_main():
+    dest_info = {}
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} StockIndexesMainSh.py  start")
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36 LBBROWSER",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -39,7 +42,7 @@ def start_main():
         titles_array.extend([s.text for s in titles_childrens])
     dest = dict(zip(titles_array, values_array))
     print(f"【start_main().dest={dest}】")
-    dest_info = {}
+
     try:
         update_date = soup.find(class_='sse_home_in_table2').findChildren('span')[0].text
         print(f"【start_main().response={update_date}】")
@@ -60,9 +63,7 @@ def start_main():
 
 
 if __name__ == '__main__':
-    # start_main()
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} StockIndexesMainSh.py  start")
-    sched = BlockingScheduler()
-    sched.add_job(start_main, CronTrigger.from_crontab('45 9 * * *'))
-    sched.start()
+    start_main()
+    # sched = BlockingScheduler()
+    # sched.add_job(start_main, CronTrigger.from_crontab('10 9 * * *'))
+    # sched.start()
