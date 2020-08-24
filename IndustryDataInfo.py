@@ -85,12 +85,12 @@ def getDates():
 
 
 if __name__ == '__main__':
-    # dates = getDates()
-    # print(f"【().dates={dates}】")
-    # for item in dates:
-    #     start_main(item, 1)
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} IndustryDataInfo.py  start")
-    sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('17 9 * * *'))
-    sched.start()
+    dates = getDates()
+    print(f"【().dates={dates}】")
+    for item in dates:
+        start_main(item, 1)
+    # strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    # print(f"{strftime} IndustryDataInfo.py  start")
+    # sched = BlockingScheduler()
+    # sched.add_job(job_function, CronTrigger.from_crontab('17 9 * * *'))
+    # sched.start()

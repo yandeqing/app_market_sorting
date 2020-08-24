@@ -58,7 +58,7 @@ def start_main(strftime, selectModule):
 
 def trim(item):
     print(f"trim={item}")
-    return float(item.replace(',', '')) if item.strip() else 0
+    return float(item.replace(',', '').replace('&nbsp;','')) if item.strip() else 0
 
 
 def getYesterday():
@@ -79,7 +79,7 @@ def job_function():
 def getDates():
     import datetime
     import time
-    begin_date = (datetime.datetime.now() - datetime.timedelta(days=60)).strftime("%Y-%m-%d")
+    begin_date = (datetime.datetime.now() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
     date_list = []
     begin_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
     end_date = datetime.datetime.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time())),

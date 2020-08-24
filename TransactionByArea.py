@@ -76,14 +76,14 @@ def getLastMonth(reference_date):
 
 
 if __name__ == '__main__':
-    # dates = getLast12Months()
-    # print(f"【().dates={dates}】")
-    # for item in dates:
-    #     start_main(item,1)
-    #     start_main(item,2)
+    dates = getLast12Months()
+    print(f"【().dates={dates}】")
+    for item in dates:
+        start_main(item,1)
+        start_main(item,2)
 
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} TransactionByArea.py  start")
-    sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('17 9 1 * *'))
-    sched.start()
+    # strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    # print(f"{strftime} TransactionByArea.py  start")
+    # sched = BlockingScheduler()
+    # sched.add_job(job_function, CronTrigger.from_crontab('17 9 1 * *'))
+    # sched.start()

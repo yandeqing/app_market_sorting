@@ -63,7 +63,7 @@ def start_main():
 
 
 if __name__ == '__main__':
-    start_main()
-    # sched = BlockingScheduler()
-    # sched.add_job(start_main, CronTrigger.from_crontab('10 9 * * *'))
-    # sched.start()
+    # start_main()
+    sched = BlockingScheduler()
+    sched.add_job(start_main, CronTrigger.from_crontab('10 9 * * *'))
+    sched.start()
