@@ -1,1 +1,1 @@
-python GoodDataInfo.py > GoodDataInfo.out  &
+python GoodDataInfo.py > ./logs/GoodDataInfo.out  &

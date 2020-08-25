@@ -1,1 +1,1 @@
-python TransactionByArea.py > TransactionByArea.out  &
+python TransactionByArea.py > ./logs/TransactionByArea.out  &

@@ -1,1 +1,1 @@
-python StockIndexesMainSh.py > StockIndexesMainSh.out  &
+python StockIndexesMainSh.py > ./logs/StockIndexesMainSh.out  &

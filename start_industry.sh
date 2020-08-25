@@ -1,1 +1,1 @@
-python IndustryDataInfo.py > IndustryDataInfo.out  &
+python IndustryDataInfo.py > ./logs/IndustryDataInfo.out  &

@@ -1,1 +1,1 @@
-python AppMarketSortingSchedue.py > AppMarketSortingSchedue.out  &
+python AppMarketSortingSchedue.py > ./logs/AppMarketSortingSchedue.out  &
