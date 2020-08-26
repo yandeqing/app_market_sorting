@@ -13,6 +13,8 @@ import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+import Config
+
 
 def getUrl(txtQueryDate, pageno=1):
     randomStr = float(random.randint(1, 100) / 1000000)
@@ -45,9 +47,9 @@ def start_main(strftime, pageno=1):
         dests.append(dest)
         dest['type'] = 'industry_data_info'
         dest['update_date'] = strftime
-        url = "http://139.129.229.205:8088"
-        response = requests.post(url, json=dest)
+        response = requests.post(Config.url, json=dest)
         print(f"insert {dest}{response.text}")
+        time.sleep(1)
 
 
 def trim(item):
@@ -62,6 +64,8 @@ def getYesterday():
 
 
 def job_function():
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} IndustryDataInfo.py  start")
     date = getYesterday().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date, 1)
@@ -85,12 +89,13 @@ def getDates():
 
 
 if __name__ == '__main__':
-    dates = getDates()
-    print(f"【().dates={dates}】")
-    for item in dates:
-        start_main(item, 1)
-    # strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    # print(f"{strftime} IndustryDataInfo.py  start")
-    # sched = BlockingScheduler()
-    # sched.add_job(job_function, CronTrigger.from_crontab('17 9 * * *'))
-    # sched.start()
+    # dates = getDates()
+    # print(f"【().dates={dates}】")
+    # for item in dates:
+    #     start_main(item, 1)
+
+    job_function()
+
+    sched = BlockingScheduler()
+    sched.add_job(job_function, CronTrigger.from_crontab('45 9 * * *'))
+    sched.start()

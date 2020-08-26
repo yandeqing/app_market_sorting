@@ -13,6 +13,8 @@ import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+import Config
+
 
 def getLast12Months():
     begin_date = 1
@@ -47,8 +49,7 @@ def start_main(strftime,pageno=1):
                 item[key] = trim(item[key])
         item['type'] = 'transaction_by_area'
         item['update_date'] = strftime+"-01"
-        url = "http://139.129.229.205:8088"
-        response = requests.post(url, json=item)
+        response = requests.post(Config.url, json=item)
         print(f"insert {item}{response.text}")
     dumps = json.dumps(content, ensure_ascii=False, indent=4)
     print(f"【start_main().response={dumps}】")
@@ -60,6 +61,8 @@ def trim(item):
 
 
 def job_function():
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} TransactionByArea.py  start")
     date_today = datetime.date.today()
     date = getLastMonth(date_today).strftime('%Y-%m')
     print(f"【main().date={date}】")
@@ -76,14 +79,13 @@ def getLastMonth(reference_date):
 
 
 if __name__ == '__main__':
-    dates = getLast12Months()
-    print(f"【().dates={dates}】")
-    for item in dates:
-        start_main(item,1)
-        start_main(item,2)
+    # dates = getLast12Months()
+    # print(f"【().dates={dates}】")
+    # for item in dates:
+    #     start_main(item,1)
+    #     start_main(item,2)
 
-    # strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    # print(f"{strftime} TransactionByArea.py  start")
-    # sched = BlockingScheduler()
-    # sched.add_job(job_function, CronTrigger.from_crontab('17 9 1 * *'))
-    # sched.start()
+
+    sched = BlockingScheduler()
+    sched.add_job(job_function, CronTrigger.from_crontab('17 7 1 * *'))
+    sched.start()

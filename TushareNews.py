@@ -11,6 +11,8 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from bs4 import BeautifulSoup
 
+import Config
+
 array = ['news_sina', 'news_eastmoney', 'news_10jqka', 'news_yuncaijing']
 values = ['新浪', '东方财富', '同花顺', '云财经']
 sources = dict(zip(array, values))
@@ -51,8 +53,7 @@ def start_main(source):
             predate = f"{getYesterday().year}-{item.text.replace('月', '-').replace('日', '')}"
             print(f"【start_main().predate============={predate}===============】")
         dest_info['type'] = "news_type"
-        url = "http://139.129.229.205:8088"
-        response = requests.post(url, json=dest_info)
+        response = requests.post(Config.url, json=dest_info)
         print(f"insert {dest_info}{response.text}")
         values_array.append(dest_info)
         # print(f"【start_main().values_array={values_array}】")

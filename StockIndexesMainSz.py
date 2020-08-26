@@ -11,6 +11,8 @@ import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+import Config
+
 
 def getDates():
     import datetime
@@ -53,8 +55,7 @@ def start_main(strftime):
         item['ltgb'] = trim(item['ltgb'])
         item['ltsz'] = trim(item['ltsz'])
         print(f"【start_main().response={item}】")
-        url = "http://139.129.229.205:8088"
-        response = requests.post(url, json=item)
+        response = requests.post(Config.url, json=item, headers={'Connection': 'close'})
         print(f"insert {item}{response.text}")
 
 
@@ -68,6 +69,8 @@ def getYesterday():
     return yesterday
 
 def job_function():
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} StockIndexesMainSz.py  start")
     date = getYesterday().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date)
@@ -75,8 +78,7 @@ def job_function():
     print(f"{strftime} StockIndexesMainSz.py  end")
 
 if __name__ == '__main__':
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} StockIndexesMainSz.py  start")
+    job_function()
     sched = BlockingScheduler()
     sched.add_job(job_function, CronTrigger.from_crontab('17 9 * * *'))
     sched.start()

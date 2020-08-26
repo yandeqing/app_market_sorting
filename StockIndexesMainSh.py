@@ -10,6 +10,8 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from bs4 import BeautifulSoup
 
+import Config
+
 
 def getUrl():
     return f"http://www.sse.com.cn/market/stockdata/statistic/"
@@ -55,15 +57,14 @@ def start_main():
     dest_info['zqsl'] = dest['上市股票/只']
     dest_info['ltsz'] = dest['流通市值/亿元']
     print(f"【start_main().response={dest_info}】")
-    url = "http://139.129.229.205:8088"
-    response = requests.post(url, json=dest_info)
+    response = requests.post(Config.url, json=dest_info, headers={'Connection': 'close'})
     print(f"insert {dest_info}{response.text}")
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSh.py  end")
 
 
 if __name__ == '__main__':
-    # start_main()
+    start_main()
     sched = BlockingScheduler()
     sched.add_job(start_main, CronTrigger.from_crontab('10 9 * * *'))
     sched.start()

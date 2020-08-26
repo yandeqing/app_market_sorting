@@ -11,6 +11,8 @@ import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+import Config
+
 
 def getUrl(num):
     return f"https://wap1.hispace.hicloud.com/uowap/index?method=internal.getTabDetail&serviceType=20&reqPageNum={num}" \
@@ -67,7 +69,6 @@ def start_main():
 
 
 def insert(payload):
-    url = "http://139.129.229.205:8088"
     # payload = {
     #     "type": "app",
     #     "name": "39. 同花顺",
@@ -76,18 +77,19 @@ def insert(payload):
     #     "dowloadCount": 4.0,
     #     "createTime": "2020-07-30"
     # }
-    response = requests.post(url, json=payload)
+    response = requests.post(Config.url, json=payload)
     print(f"insert {payload}{response.text}")
+    time.sleep(1)
 
 def job_function():
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} AppMarketSortingSchedue.py  start")
     start_main()
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} AppMarketSortingSchedue.py  end")
 
 if __name__ == '__main__':
-    # job_function()
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} AppMarketSortingSchedue.py  start")
+    job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('30 8 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('30 19 * * *'))
     sched.start()

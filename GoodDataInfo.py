@@ -13,6 +13,8 @@ import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+import Config
+
 array = ['GE', '00,20', '30', 'GE,30,00,20']
 values = ['创业板', '主板', '中小企业板', '全部']
 sources = dict(zip(array, values))
@@ -45,20 +47,21 @@ def start_main(strftime, selectModule):
                 if '平均' in replace:
                     dest[replace] = 0
                 else:
-                    dest[replace] = item[key]
+                    dest[replace] = item[key].strip().replace('&nbsp;','')
                 pass
         dests.append(dest)
         dest['type'] = 'good_data_info'
         dest['select_mode'] = sources[selectModule]
         dest['update_date'] = strftime
-        url = "http://139.129.229.205:8088"
-        response = requests.post(url, json=dest)
+        response = requests.post(Config.url, json=dest)
+        # print(f"insert {dest}")
         print(f"insert {dest}{response.text}")
+        time.sleep(1)
 
 
 def trim(item):
     print(f"trim={item}")
-    return float(item.replace(',', '').replace('&nbsp;','')) if item.strip() else 0
+    return float(item.replace(',', '')) if item.strip() else 0
 
 
 def getYesterday():
@@ -68,6 +71,8 @@ def getYesterday():
 
 
 def job_function():
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} GoodDataInfo.py  start")
     date = getYesterday().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     for mode in array:
@@ -97,8 +102,7 @@ if __name__ == '__main__':
     # for item in dates:
     #     for mode in array:
     #         start_main(item, mode)
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} GoodDataInfo.py  start")
+    job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('20 10 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('10 8 * * *'))
     sched.start()
