@@ -79,7 +79,6 @@ def insert(payload):
     # }
     response = requests.post(Config.url, json=payload)
     print(f"insert {payload}{response.text}")
-    time.sleep(1)
 
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
