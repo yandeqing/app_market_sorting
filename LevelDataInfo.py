@@ -73,10 +73,10 @@ def job_function():
 
 def getDataByDate(date):
     # 统计总数
-    count = start_main(0, date, 1, "'level_data_info_sum'")
+    count = start_main(0, date, 1, 'level_data_info_sum')
     for i in range(1, count):
         # 统计详情 个股
-        start_main(1, date, i, "'level_data_info'")
+        start_main(1, date, i, 'level_data_info')
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} LevelDataInfo.py  end")
 
