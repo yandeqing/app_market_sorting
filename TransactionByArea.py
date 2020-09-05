@@ -40,7 +40,9 @@ def start_main(strftime,pageno=1):
         "Accept-Encoding": "gzip, deflate, sdch, br",
         "Accept-Language": "zh-CN,zh;q=0.8"
     }
-    data = requests.get(getUrl(strftime,pageno), headers=headers)
+    url = getUrl(strftime, pageno)
+    print(f"【start_main().url={url}】")
+    data = requests.get(url, headers=headers)
     content = data.json()[1]['data']
     for item in content:
         del item['rowid']
@@ -85,7 +87,7 @@ if __name__ == '__main__':
     #     start_main(item,1)
     #     start_main(item,2)
 
-
+    # job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('17 7 1 * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('17 7 18 * *'))
     sched.start()
