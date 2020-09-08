@@ -4,67 +4,111 @@
 @author: Zuber
 @date:  2020/7/29 16:58
 '''
+import json
+import re
 import time
+
 import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
-from bs4 import BeautifulSoup
 
 import Config
 
 
-def getUrl():
-    return f"http://www.sse.com.cn/market/stockdata/statistic/"
+def loads_jsonp(_jsonp):
+    try:
+        return json.loads(re.match(".*?({.*}).*", _jsonp, re.S).group(1))
+    except:
+        raise ValueError('Invalid Input')
 
 
-def start_main():
+def getYesterday():
+    import datetime
+    yesterday = datetime.date.today() + datetime.timedelta(-1)
+    return yesterday
+
+
+def getUrl(searchDate):
+    return f"http://query.sse.com.cn/commonQuery.do?jsonCallBack=jsonpCallback18700&searchDate={searchDate}&sqlId=COMMON_SSE_SJ_GPSJ_CJGK_DAYCJGK_C&stockType=90&_={int(time.time() * 1000)}"
+
+
+def start_main(searchDate):
     dest_info = {}
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSh.py  start")
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36 LBBROWSER",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Encoding": "gzip, deflate, sdch, br",
-        "Accept-Language": "zh-CN,zh;q=0.8"
+        'Host': 'query.sse.com.cn',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0',
+        'Accept': '*/*',
+        'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Referer': 'http://www.sse.com.cn/market/stockdata/overview/day/',
+        # 'Cookie': 'JSESSIONID=75F3327F6277F963CBFBDEF11E466AD1; yfx_c_g_u_id_10000042=_ck20090810012310712757532516914; yfx_f_l_v_t_10000042=f_t_1599530482942__r_t_1599530482942__v_t_1599530482942__r_c_0; VISITED_MENU=%5B%228451%22%2C%2211913%22%2C%228464%22%2C%228466%22%5D',
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache'
     }
-    data = requests.get(getUrl(), headers=headers)
-    content = data.content
-    soup = BeautifulSoup(content, 'lxml')
-    [s.extract() for s in soup.findAll('script')]
-    titles_array = []
-    values_array = []
-    table = soup.find_all(class_="table")[0]
-    childrens = table.findChildren('tr')
-    for children in childrens:
-        find_childrens = children.findChildren('em')
-        titles_childrens = children.findChildren('i')
-        # print(f"【start_main().response={find_childrens}】")
-        # print(f"【start_main().response={titles_childrens}】")
-        values_array.extend([float(s.text) for s in find_childrens])
-        titles_array.extend([s.text for s in titles_childrens])
-    dest = dict(zip(titles_array, values_array))
-    print(f"【start_main().dest={dest}】")
+    url = getUrl(searchDate)
+    print(f"【start_main().jsonp={url}】")
+    data = requests.get(url, headers=headers)
+    results = loads_jsonp(data.text)['result']
+    dest_info = {}
+    for item in results:
+        # dumps = json.dumps(item, indent=4, ensure_ascii=False)
+        dest_info['type'] = 'sz_stock_indexes'
+        product_type = item['PRODUCT_TYPE']
+        if product_type != '43' and product_type!='40':
+            dest_info['lbmc'] =getName(product_type)
+            dest_info['sjzz'] =float(item['MKT_VALUE'])
+            dest_info['zqsl'] = 0
+            dest_info['update_date'] = searchDate
+            dest_info['ltsz'] =float( item['NEGOTIABLE_VALUE'])
+            response = requests.post(Config.url, json=dest_info, headers={'Connection': 'close'})
+            print(f"insert {dest_info}{response.text}")
 
-    try:
-        update_date = soup.find(class_='sse_home_in_table2').findChildren('span')[0].text
-        print(f"【start_main().response={update_date}】")
-        dest_info['update_date'] = update_date
-    except:
-        pass
-    dest_info['type'] = 'sz_stock_indexes'
-    dest_info['lbmc'] = '上证股票'
-    dest_info['sjzz'] = dest['总市值/亿元']
-    dest_info['zqsl'] = dest['上市股票/只']
-    dest_info['ltsz'] = dest['流通市值/亿元']
-    print(f"【start_main().response={dest_info}】")
-    response = requests.post(Config.url, json=dest_info, headers={'Connection': 'close'})
-    print(f"insert {dest_info}{response.text}")
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSh.py  end")
 
+def getName(product_type):
+    if product_type=='1':
+        return '上证主板A'
+    if product_type=='2':
+        return '上证主板B'
+    if product_type=='12':
+        return '上证股票'
+    if product_type=='48':
+        return '科创板'
+    return product_type
+
+
+def getDates(days):
+    import datetime
+    import time
+    begin_date = (datetime.datetime.now() - datetime.timedelta(days=days)).strftime("%Y-%m-%d")
+    date_list = []
+    begin_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
+    end_date = datetime.datetime.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time())),
+                                          "%Y-%m-%d")
+    while begin_date < end_date:
+        date_str = begin_date.strftime("%Y-%m-%d")
+        date_list.append(date_str)
+        begin_date += datetime.timedelta(days=1)
+    return date_list
+
+def job_function():
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} StockIndexesMainSh.py  start")
+    date = getYesterday().strftime('%Y-%m-%d')
+    print(f"【main().date={date}】")
+    start_main(date)
+    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print(f"{strftime} StockIndexesMainS.py  end")
 
 if __name__ == '__main__':
-    start_main()
+    # dates = getDates(30)
+    # print(f"【().dates={dates}】")
+    # for item in dates:
+    #     start_main(item)
     sched = BlockingScheduler()
-    sched.add_job(start_main, CronTrigger.from_crontab('10 9 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('10 9 * * *'))
     sched.start()
