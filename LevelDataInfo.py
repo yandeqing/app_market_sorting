@@ -59,7 +59,7 @@ def trim(item):
 
 def getYesterday():
     import datetime
-    yesterday = datetime.date.today() + datetime.timedelta(-2)
+    yesterday = datetime.date.today() + datetime.timedelta(-1)
     return yesterday
 
 
@@ -81,10 +81,10 @@ def getDataByDate(date):
     print(f"{strftime} LevelDataInfo.py  end")
 
 
-def getDates():
+def getDates(days):
     import datetime
     import time
-    begin_date = (getYesterday() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+    begin_date = (datetime.date.today() - datetime.timedelta(days=days)).strftime("%Y-%m-%d")
     date_list = []
     begin_date = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
     end_date = datetime.datetime.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time())),
@@ -97,11 +97,12 @@ def getDates():
 
 
 if __name__ == '__main__':
-    # dates = getDates()
+    # dates = getDates(4)
     # print(f"【().dates={dates}】")
     # for item in dates:
+    #     print(f"【().item={item}】")
     #     getDataByDate(item)
-    job_function()
+    # job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('10 7 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('0 16 * * *'))
     sched.start()
