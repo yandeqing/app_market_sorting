@@ -4,8 +4,6 @@
 @author: Zuber
 @date:  2020/7/29 16:58
 '''
-import datetime
-import json
 import random
 import time
 
@@ -14,7 +12,6 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 import Config
-
 
 
 def getUrl(txtQueryDate, tab2PAGENO=1):
@@ -104,5 +101,5 @@ if __name__ == '__main__':
     #     getDataByDate(item)
     # job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('0 16 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('29 9 * * *'))
     sched.start()
