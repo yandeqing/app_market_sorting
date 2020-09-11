@@ -71,7 +71,7 @@ def job_function():
 
 
 if __name__ == '__main__':
-    job_function()
-    # sched = BlockingScheduler()
-    # sched.add_job(job_function, CronTrigger.from_crontab('11 9 1 * *'))
-    # sched.start()
+    # job_function()
+    sched = BlockingScheduler()
+    sched.add_job(job_function, CronTrigger.from_crontab('11 9 1 * *'))
+    sched.start()
