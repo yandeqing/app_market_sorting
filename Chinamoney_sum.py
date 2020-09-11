@@ -42,33 +42,36 @@ def start_main(strftime, type, insert_all=False):
                 pass
         item['type'] = type
         item['update_date'] = strftime
-        if item['date'] == strftime or insert_all:
+        if item['date'] in strftime or insert_all:
             del item['startDate']
             del item['endDate']
-            # response = requests.post(Config.url, json=item)
-            # print(f"insert {item}{response.text}")
-            print(f"insert {item}")
+            item['date'] = item['date'] + "-01"
+            response = requests.post(Config.url, json=item)
+            print(f"insert {item}{response.text}")
+            # print(f"insert {item}")
 
 
 def trim(item):
     return float(item.replace(',', '')) if item.strip() else 0
+
 
 def getLastMonth(reference_date):
     last_month = reference_date.replace(day=1) - datetime.timedelta(days=1)
     date = last_month
     return date
 
+
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} Chinamoney_sum.py  start")
-    date = getLastMonth(datetime.date.today()).strftime('%Y-%m')
+    date = getLastMonth(datetime.date.today()).strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
-    start_main(date, "chinamoney_data_sum", insert_all=False)
+    start_main(date, "chinamoney_data_sum", insert_all=True)
     print(f"{strftime} Chinamoney_sum.py  end")
 
 
 if __name__ == '__main__':
-    # job_function()
-    sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('11 9 1 * *'))
-    sched.start()
+    job_function()
+    # sched = BlockingScheduler()
+    # sched.add_job(job_function, CronTrigger.from_crontab('11 9 1 * *'))
+    # sched.start()
