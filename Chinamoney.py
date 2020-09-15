@@ -44,13 +44,17 @@ def start_main(strftime,type,insert_all=False):
 def trim(item):
     return float(item.replace(',', '')) if item.strip() else 0
 
+def getYesterday():
+    import datetime
+    yesterday = datetime.date.today() + datetime.timedelta(-1)
+    return yesterday
 
 
 
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} Chinamoney.py  start")
-    date = datetime.date.today().strftime('%Y-%m-%d')
+    date = getYesterday().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date,"chinamoney_data",insert_all=False)
     print(f"{strftime} Chinamoney.py  end")
