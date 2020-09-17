@@ -43,6 +43,7 @@ def start_main(metaIndex,strftime, pageNo,type):
         dests.append(dest)
         dest['type'] = type
         dest['update_date'] = strftime
+        dest['source'] = 'shenzhen'
         response = requests.post(Config.url, json=dest)
         # print(f"insert {dest}")
         print(f"insert {dest}{response.text}")

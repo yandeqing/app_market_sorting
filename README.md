@@ -40,3 +40,19 @@
     "TRADING_TX_FULL": "1921.7507",
     "DEPOSIT_VOL": "-"
 }
+
+{
+    "ROWNUM_": null,
+    "opDate": "20200914",
+    "rqchl": null,
+    "rqmcl": 232461282,
+    "rqyl": 4684777238,
+    "rqylje": 48242131887,
+    "rw": null,
+    "rzche": 21705241851,
+    "rzmre": 22654661047,
+    "rzrqjyzl": 777303311993,
+    "rzye": 729061180106,
+    "securityAbbr": null,
+    "stockCode": null
+}

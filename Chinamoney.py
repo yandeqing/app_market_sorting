@@ -18,7 +18,8 @@ import Config
 def getUrl():
     return f"http://www.chinamoney.com.cn/ags/ms/cm-u-bond-publish/TicketHandle?t=1599623434436&t=1599623434437"
 
-def start_main(strftime,type,insert_all=False):
+
+def start_main(strftime, type, insert_all=False):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36 LBBROWSER",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -33,10 +34,12 @@ def start_main(strftime,type,insert_all=False):
             try:
                 item[key] = trim(item[key])
             except:
-               pass
+                pass
         item['type'] = type
         item['update_date'] = strftime
-        if item['operationFromDate']==strftime or insert_all:
+        today_str = datetime.date.today().strftime('%Y-%m-%d')
+        if item['operationFromDate'] == strftime or today_str == item[
+            'operationFromDate'] or insert_all:
             response = requests.post(Config.url, json=item)
             print(f"insert {item}{response.text}")
 
@@ -44,11 +47,11 @@ def start_main(strftime,type,insert_all=False):
 def trim(item):
     return float(item.replace(',', '')) if item.strip() else 0
 
+
 def getYesterday():
     import datetime
     yesterday = datetime.date.today() + datetime.timedelta(-1)
     return yesterday
-
 
 
 def job_function():
@@ -56,11 +59,8 @@ def job_function():
     print(f"{strftime} Chinamoney.py  start")
     date = getYesterday().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
-    start_main(date,"chinamoney_data",insert_all=False)
+    start_main(date, "chinamoney_data", insert_all=False)
     print(f"{strftime} Chinamoney.py  end")
-
-
-
 
 
 if __name__ == '__main__':
