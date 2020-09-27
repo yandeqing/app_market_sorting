@@ -63,22 +63,28 @@ def trim(item):
     return float(item.replace(',', '')) if item.strip() else 0
 
 
-def getYesterday():
+
+def getDayBeforeToday(n):
     import datetime
-    yesterday = datetime.date.today() + datetime.timedelta(-1)
+    yesterday = datetime.date.today() + datetime.timedelta(-n)
     return yesterday
 
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSz.py  start")
-    date = getYesterday().strftime('%Y-%m-%d')
+    # from datetime import datetime
+    # dayOfWeek = datetime.now().isoweekday()
+    # if dayOfWeek==1:
+    #     date = getDayBeforeToday(3).strftime('%Y-%m-%d')
+    # else:
+    date = getDayBeforeToday(1).strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date)
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSz.py  end")
 
 if __name__ == '__main__':
-    job_function()
+    # job_function()
     sched = BlockingScheduler()
     sched.add_job(job_function, CronTrigger.from_crontab('17 9 * * *'))
     sched.start()

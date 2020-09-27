@@ -22,9 +22,9 @@ def loads_jsonp(_jsonp):
         raise ValueError('Invalid Input')
 
 
-def getYesterday():
+def getDayBeforeToday(n):
     import datetime
-    yesterday = datetime.date.today() + datetime.timedelta(-1)
+    yesterday = datetime.date.today() + datetime.timedelta(-n)
     return yesterday
 
 
@@ -98,7 +98,12 @@ def getDates(days):
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} StockIndexesMainSh.py  start")
-    date = getYesterday().strftime('%Y-%m-%d')
+    from datetime import datetime
+    # dayOfWeek = datetime.now().isoweekday()
+    # if dayOfWeek==1:
+    #     date = getDayBeforeToday(3).strftime('%Y-%m-%d')
+    # else:
+    date = getDayBeforeToday(1).strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date)
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -108,7 +113,7 @@ if __name__ == '__main__':
     # dates = getDates(30)
     # print(f"【().dates={dates}】")
     # for item in dates:
-    #     start_main(item)
+    #     start_main(item
     sched = BlockingScheduler()
     sched.add_job(job_function, CronTrigger.from_crontab('10 9 * * *'))
     sched.start()

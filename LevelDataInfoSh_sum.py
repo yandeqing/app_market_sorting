@@ -93,7 +93,7 @@ def job_function():
 #
 debug = False
 if __name__ == '__main__':
-    # job_function()
+    job_function()
     sched = BlockingScheduler()
     sched.add_job(job_function, CronTrigger.from_crontab('50 9 * * *'))
     sched.start()

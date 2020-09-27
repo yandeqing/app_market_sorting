@@ -5,7 +5,6 @@
 @date:  2020/7/29 16:58
 '''
 import datetime
-import random
 import time
 
 import requests
@@ -37,9 +36,12 @@ def start_main(strftime, type, insert_all=False):
                 pass
         item['type'] = type
         item['update_date'] = strftime
-        today_str = datetime.date.today().strftime('%Y-%m-%d')
-        if item['operationFromDate'] == strftime or today_str == item[
-            'operationFromDate'] or insert_all:
+        operationFromDate = item['operationFromDate']
+        from datetime import datetime
+        dayOfWeek = datetime.now().isoweekday()
+        fridayData = dayOfWeek == 1 and operationFromDate == getDayBeforeToday(3).strftime(
+            '%Y-%m-%d')
+        if strftime == operationFromDate or insert_all:
             response = requests.post(Config.url, json=item)
             print(f"insert {item}{response.text}")
 
@@ -48,16 +50,16 @@ def trim(item):
     return float(item.replace(',', '')) if item.strip() else 0
 
 
-def getYesterday():
+def getDayBeforeToday(n):
     import datetime
-    yesterday = datetime.date.today() + datetime.timedelta(-1)
+    yesterday = datetime.date.today() + datetime.timedelta(-n)
     return yesterday
 
 
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} Chinamoney.py  start")
-    date = getYesterday().strftime('%Y-%m-%d')
+    date = datetime.date.today().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date, "chinamoney_data", insert_all=False)
     print(f"{strftime} Chinamoney.py  end")
