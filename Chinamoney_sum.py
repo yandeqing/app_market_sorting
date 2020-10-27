@@ -64,7 +64,7 @@ def getLastMonth(reference_date):
 def job_function():
     strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"{strftime} Chinamoney_sum.py  start")
-    date = getLastMonth(datetime.date.today()).strftime('%Y-%m-%d')
+    date = datetime.date.today().strftime('%Y-%m-%d')
     print(f"【main().date={date}】")
     start_main(date, "chinamoney_data_sum", insert_all=True)
     print(f"{strftime} Chinamoney_sum.py  end")
@@ -73,5 +73,5 @@ def job_function():
 if __name__ == '__main__':
     # job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('45 9 1 * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('45 7 * * *'))
     sched.start()
