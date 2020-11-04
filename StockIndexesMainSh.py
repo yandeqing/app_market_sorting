@@ -113,7 +113,8 @@ if __name__ == '__main__':
     # dates = getDates(30)
     # print(f"【().dates={dates}】")
     # for item in dates:
-    #     start_main(item
+    #     start_main(item)
+    # job_function()
     sched = BlockingScheduler()
-    sched.add_job(job_function, CronTrigger.from_crontab('10 9 * * *'))
+    sched.add_job(job_function, CronTrigger.from_crontab('24 9 * * *'))
     sched.start()
