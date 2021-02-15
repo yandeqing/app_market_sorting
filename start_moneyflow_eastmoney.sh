@@ -1,0 +1,1 @@
+python -u industry_moneyflow_eastmoney.py > ./logs/industry_moneyflow_eastmoney.out  &
