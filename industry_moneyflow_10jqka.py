@@ -24,7 +24,7 @@ def transfer_fields(item_source):
     item = {}
     item['板块名称'] = item_source.get('行业')
     item['净流入'] = item_source.get('净额(亿)')
-    item['净流入占比'] = round(100*item_source.get('净额(亿)') / (item_source.get('流入资金(亿)') + item_source.get('流出资金(亿)')),2)
+    item['净流入占比'] = round(100 * item_source.get('净额(亿)') / (item_source.get('流入资金(亿)') + item_source.get('流出资金(亿)')), 2)
     item['板块指数值'] = item_source.get('行业指数')
     item['涨跌幅'] = item_source.get('涨跌幅.1').replace('%', '')
     return item
@@ -54,7 +54,7 @@ def get_one_page(page):
         header['Pragma'] = 'no-cache'
         header['Cache-Control'] = 'no-cache'
         header[
-            'Cookie'] = 'v=A1Q8Co_kyC14UVxhirWJWKGKJZPGrXiXutEM2-414F9i2fqDFr1IJwrh3Go9;'
+            'Cookie'] = 'v=A3AYpovQ5FoufbheEVL1LP1WQT_CuVQDdp2oB2rBPEueJR5vEskkk8ateJa5;'
         header['Host'] = 'data.10jqka.com.cn'
         header['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0'
         response = requests.get(url, headers=header)
@@ -67,6 +67,7 @@ def get_one_page(page):
 
 def getdata(page):
     text = get_one_page(page)
+    print(text)
     df = pandas.read_html(text, )[0]
     keys = df.keys()
     print(list(keys))
@@ -80,19 +81,20 @@ def getdata(page):
 
 
 def job_function():
-    date = industry_moneyflow_eastmoney.get_latest_date()
-    print(date)
-    new_item_arr = []
-    for i in range(2):
-        data = getdata(i + 1)
-        new_item_arr.extend(data)
-    for item in new_item_arr:
-        item=transfer_fields(item)
-        item['source'] = '同花顺'
-        item['交易日期'] = date
-        data_uploader_helper.upload_one(item, 'industry_money_flow')
-    dumps = json.dumps(new_item_arr, indent=4, ensure_ascii=False)
-    print(dumps)
+    if data_uploader_helper.is_trade_day():
+        date = industry_moneyflow_eastmoney.get_latest_date()
+        print(date)
+        new_item_arr = []
+        for i in range(2):
+            data = getdata(i + 1)
+            new_item_arr.extend(data)
+        for item in new_item_arr:
+            item = transfer_fields(item)
+            item['source'] = '同花顺'
+            item['交易日期'] = date
+            data_uploader_helper.upload_one(item, 'industry_money_flow')
+        dumps = json.dumps(new_item_arr, indent=4, ensure_ascii=False)
+        print(dumps)
 
 
 if __name__ == '__main__':
@@ -100,3 +102,4 @@ if __name__ == '__main__':
     sched = BlockingScheduler()
     sched.add_job(job_function, CronTrigger.from_crontab('35 18 * * *'))
     sched.start()
+    # getdata(2)

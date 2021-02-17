@@ -22,7 +22,7 @@ def transfer_fields(item_source):
     item['板块名称'] = item_source.pop('f14')
     value = 0
     try:
-        value = round(item_source.pop('f62') / 10000, 2)
+        value = round(item_source.pop('f62') / (10000 * 10000), 2)
     except:
         pass
     item['净流入'] = value
@@ -93,10 +93,11 @@ def get_industry():
 
 
 def job_function():
-    all_industry = get_industry()
-    # if all_industry:
-    #     dumps = json.dumps(all_industry, indent=4, ensure_ascii=False)
-    #     print(dumps)
+    if data_uploader_helper.is_trade_day():
+        all_industry = get_industry()
+        if all_industry:
+            dumps = json.dumps(all_industry, indent=4, ensure_ascii=False)
+            print(dumps)
 
 
 if __name__ == '__main__':

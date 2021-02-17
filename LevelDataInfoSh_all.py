@@ -14,6 +14,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 import Config
+import data_uploader_helper
 
 
 def loads_jsonp(_jsonp):
@@ -100,14 +101,14 @@ def trim1(item):
 
 
 def job_function():
-    import datetime
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} LevelDataInfoSh_sum.py  start")
-    date = getYesterday()
-    print(f"【main().beginDate={date.strftime('%Y%m%d')}】")
-    start_main(date.strftime('%Y%m%d'))
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} LevelDataInfoSh_sum.py  end")
+    if data_uploader_helper.is_trade_day():
+        strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f"{strftime} LevelDataInfoSh_sum.py  start")
+        date = getYesterday()
+        print(f"【main().beginDate={date.strftime('%Y%m%d')}】")
+        start_main(date.strftime('%Y%m%d'))
+        strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f"{strftime} LevelDataInfoSh_sum.py  end")
 
 
 def getDates(days):

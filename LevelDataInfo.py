@@ -12,6 +12,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 import Config
+import data_uploader_helper
 
 
 def getUrl(txtQueryDate, tab2PAGENO=1):
@@ -62,11 +63,12 @@ def getYesterday():
 
 
 def job_function():
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} LevelDataInfo.py  start")
-    date = getYesterday().strftime('%Y-%m-%d')
-    print(f"【main().date={date}】")
-    getDataByDate(date)
+    if data_uploader_helper.is_trade_day():
+        strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f"{strftime} LevelDataInfo.py  start")
+        date = getYesterday().strftime('%Y-%m-%d')
+        print(f"【main().date={date}】")
+        getDataByDate(date)
 
 
 def getDataByDate(date):

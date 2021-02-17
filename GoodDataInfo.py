@@ -14,6 +14,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 import Config
+import data_uploader_helper
 
 array = ['GE', '00,20', '30', 'GE,30,00,20']
 values = ['创业板', '主板', '中小企业板', '全部']
@@ -40,14 +41,14 @@ def start_main(strftime, selectModule):
     for item in content:
         dest = {}
         for key in item.keys():
-            replace = cols[key].replace('<br>', '').replace('&nbsp;','')
+            replace = cols[key].replace('<br>', '').replace('&nbsp;', '')
             try:
                 dest[replace] = trim(item[key])
             except:
                 if '平均' in replace:
                     dest[replace] = 0
                 else:
-                    dest[replace] = item[key].strip().replace('&nbsp;','')
+                    dest[replace] = item[key].strip().replace('&nbsp;', '')
                 pass
         dests.append(dest)
         dest['type'] = 'good_data_info'
@@ -71,14 +72,15 @@ def getYesterday():
 
 
 def job_function():
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} GoodDataInfo.py  start")
-    date = getYesterday().strftime('%Y-%m-%d')
-    print(f"【main().date={date}】")
-    for mode in array:
-        start_main(date, mode)
-    strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print(f"{strftime} GoodDataInfo.py  end")
+    if data_uploader_helper.is_trade_day():
+        strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f"{strftime} GoodDataInfo.py  start")
+        date = getYesterday().strftime('%Y-%m-%d')
+        print(f"【main().date={date}】")
+        for mode in array:
+            start_main(date, mode)
+        strftime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f"{strftime} GoodDataInfo.py  end")
 
 
 def getDates():
