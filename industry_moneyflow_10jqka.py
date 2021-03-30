@@ -10,6 +10,7 @@ from apscheduler.triggers.cron import CronTrigger
 import Config
 import data_uploader_helper
 import industry_moneyflow_eastmoney
+from chorme import chorme_base
 
 
 def loads_jsonp(_jsonp):
@@ -35,6 +36,9 @@ def get_one_page(page):
     try:
         url = f'http://data.10jqka.com.cn/funds/hyzjl/field/tradezdf/order/desc/page/{page}/ajax/1/free/1/'
         print(f'url={url}')
+        text = chorme_base.get_page_source(url)
+        if text:
+            return text
         # Host: data.10jqka.com.cn
         # User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0
         # Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
@@ -54,9 +58,9 @@ def get_one_page(page):
         header['Pragma'] = 'no-cache'
         header['Cache-Control'] = 'no-cache'
         header[
-            'Cookie'] = 'v=A3AYpovQ5FoufbheEVL1LP1WQT_CuVQDdp2oB2rBPEueJR5vEskkk8ateJa5;'
+            'Cookie'] = 'v=A9pL3pRPbrYUr-IaAwwXmp4kK4H8C17l0I_SieRThm04V3QhzJuu9aAfIpi3'
         header['Host'] = 'data.10jqka.com.cn'
-        header['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0'
+        header['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0'
         response = requests.get(url, headers=header)
         if response.status_code == 200:
             return response.text
@@ -81,17 +85,18 @@ def getdata(page):
 
 
 def job_function():
-    if data_uploader_helper.is_trade_day():
+    if data_uploader_helper.is_trade_day(True):
         date = industry_moneyflow_eastmoney.get_latest_date()
         print(date)
         new_item_arr = []
         for i in range(2):
             data = getdata(i + 1)
             new_item_arr.extend(data)
-        for item in new_item_arr:
+        for index,item in enumerate(new_item_arr):
             item = transfer_fields(item)
             item['source'] = '同花顺'
             item['交易日期'] = date
+            print(f"insert {index}.{item}")
             data_uploader_helper.upload_one(item, 'industry_money_flow')
         dumps = json.dumps(new_item_arr, indent=4, ensure_ascii=False)
         print(dumps)

@@ -1,1 +1,2 @@
-source env/bin/activate 
+#!/usr/bin/env bash
+source env/bin/activate
